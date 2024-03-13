@@ -31,9 +31,13 @@ def test(request:Request):
 """
     return HTMLResponse(content=html_content, status_code=200)
 
+class Task(BaseModel):
+    title:str
+    description:str
+
 @app.post('/task_list/')
-def create_task(request:Request, title:str = Form(...), descriptin:str = Form(...)):
-    print(title, descriptin)
+def create_task(request:Request, task:Task):
+    print(task)
     tasks = database('database.json', 'r')
     return templates.TemplateResponse(request=request, name='task_list.html', context=tasks)
 
