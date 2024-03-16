@@ -21,7 +21,23 @@
         <button id="btnTaskForm">Добавить задачу</button>
     </form>
     <script>
-        
+        let taskForm = document.getElementById('taskForm');
+        let post_url_tasks = "{{url}}"
+        taskForm.addEventListener('submit', function(event){
+            let title = document.getElementById('task-title').value;
+            let description = document.getElementById('task-description').value;
+            const data = {
+                "title": title,
+                "description": description
+            }
+            fetch(post_url_tasks, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // <-- Преобразует JS обьект в JSON обьет
+            })
+        })
     </script>
 </body>
 </html>

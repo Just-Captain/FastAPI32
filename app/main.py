@@ -10,6 +10,9 @@ app = FastAPI() # <- создаем экземпляр класса
 app.mount('/static', StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory='templates')
 
+URLS = [
+    {"tasks_post" : "127.0.0.1:8000/tasks/"}
+]
 
 def database(name_db, mode, data=None):
     if mode == 'r':
@@ -29,13 +32,16 @@ class Task(BaseModel):
 
 @app.post('/tasks/')
 def create_task(request:Request, task:Task):
-    print(task)
+    task = {"title": task.title,"description": task.description}
     tasks = database('database.json', 'r')
-    return templates.TemplateResponse(request=request, name='tasks.html', context=tasks)
+    tasks['tasks'].append(task)
+    database('database.json', 'w', tasks)
+
 
 @app.get('/tasks/')
 def get_tasks(request:Request):
     tasks = database('database.json', 'r')
+    tasks['url'] = 'http://127.0.0.1:8000/tasks/'
     return templates.TemplateResponse(request=request, name='tasks.html', context=tasks)
 
 # ls - комадна показывающая в консоле папки и файлы
