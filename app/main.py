@@ -19,37 +19,25 @@ def database(name_db, mode, data=None):
         with open(name_db, mode, encoding='utf-8') as db:
             json.dump(data, db)
 
-@app.get('/test/', response_class=HTMLResponse)
-def test(request:Request):
-    html_content = """
-    <html>
-        <body>
-            <h1>Hello</h1>
-        </body>
-    </html>
- 
-"""
-    return HTMLResponse(content=html_content, status_code=200)
 
 class Task(BaseModel):
+    """
+    Схема обьекта, которую мы ожидаем получить от клиента
+    """
     title:str
     description:str
 
-@app.post('/task_list/')
+@app.post('/tasks/')
 def create_task(request:Request, task:Task):
     print(task)
     tasks = database('database.json', 'r')
-    return templates.TemplateResponse(request=request, name='task_list.html', context=tasks)
+    return templates.TemplateResponse(request=request, name='tasks.html', context=tasks)
 
-@app.get('/task_list/')
-def list_task(request:Request):
+@app.get('/tasks/')
+def get_tasks(request:Request):
     tasks = database('database.json', 'r')
-    return templates.TemplateResponse(request=request, name='task_list.html', context=tasks)
+    return templates.TemplateResponse(request=request, name='tasks.html', context=tasks)
 
-@app.get('/users/')
-def users(request:Request):
-    users = database('database.json', 'r')
-    return templates.TemplateResponse(request=request, name='users.html', context=users)
 # ls - комадна показывающая в консоле папки и файлы
 # cd app - что бы перейти в директорию app
 # cd .. - что бы вернуться на один уровень назад
