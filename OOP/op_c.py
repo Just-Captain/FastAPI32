@@ -62,3 +62,56 @@ print(user_one.count, 'user_one')
 user_one.update_login('Antsiferov@gmail.com')
 print(user_one.get_login())
 print(user_two.get_login())
+
+class Fraction:
+    
+    def __init__(self, numerator, denominator) -> None:
+        self.__numerator = numerator
+        self.__denominator = denominator
+
+    def output_fraction(self):
+        return f"{self.__numerator}/{self.__denominator}"
+    
+    def get_numerator(self):
+        return self.__numerator
+    
+    def get_denominator(self):
+        return self.__denominator
+
+    @staticmethod
+    def __reduction(numerator, denominator):
+        general_list = []
+        flag = True
+        while True:
+            numerator, denominator = denominator, numerator % denominator
+            general_list.append(numerator)
+            if denominator == 0:
+                break
+        return general_list[-1]
+
+    def sum(self, other_fraction):
+        new_numerator = self.__numerator * other_fraction.get_denominator() + other_fraction.get_numerator() * self.__denominator
+        new_denominator = self.__denominator * other_fraction.get_denominator()
+        general = Fraction.__reduction(new_numerator, new_denominator)
+        return Fraction(int(new_numerator/general), int(new_denominator/general))
+    
+    def minus(self, other_fraction):
+        new_numerator = self.__numerator * other_fraction.get_denominator() - other_fraction.get_numerator() * self.__denominator
+        new_denominator = self.__denominator * other_fraction.get_denominator()
+        return Fraction(new_numerator, new_denominator)
+    
+    def multiply(self, other_fraction):
+        new_numerator = self.__numerator * other_fraction.get_numerator()
+        new_denominator = self.__denominator * other_fraction.get_denominator()
+        return Fraction(new_numerator, new_denominator)
+    
+    def divide(self, other_fraction):
+        new_numerator = self.__numerator * other_fraction.get_denominator()
+        new_denominator = self.__denominator * other_fraction.get_numerator()
+        return Fraction(new_numerator, new_denominator)
+
+
+frac_one = Fraction(1, 2)
+frac_two = Fraction(3, 4)
+result = frac_one.multiply(frac_two)
+print(result.output_fraction())
