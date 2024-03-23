@@ -3,8 +3,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import json
 from fastapi.responses import HTMLResponse
+from sqlalchemy import select
 import uvicorn
 from pydantic import BaseModel
+from sqlalchemy.orm import sessionmaker, Session
+from database import Model, engine, Task
 
 app = FastAPI() # <- создаем экземпляр класса
 app.mount('/static', StaticFiles(directory="static"), name="static")
@@ -28,6 +31,7 @@ class DatabaseJson:
     def write(self, data) -> None:
         with open(self.__name_db, 'w', encoding='utf-8') as db:
             json.dump(data, db, ensure_ascii=False)
+    
 
 database = DatabaseJson('database.json')
 
@@ -42,9 +46,9 @@ class Task(BaseModel):
 @app.post('/tasks/')
 def create_task(request:Request, task:Task):
     task = {"title": task.title,"description": task.description}
-    tasks = database('database.json', 'r')
+    tasks = database.read()
     tasks['tasks'].append(task)
-    database('database.json', 'w', tasks)
+    database.write(tasks)
 
 
 @app.get('/tasks/')
@@ -53,8 +57,18 @@ def get_tasks(request:Request):
     return templates.TemplateResponse(request=request, name='tasks.html', context=tasks)
 
 
+@app.get('/api/tasks/')
+def api_get_tasks(request:Request):
+    session = Session(engine)
+    print(session)
+    stmt = select(Task)
+    print(stmt)
+    #print(stmt)
+    return {"Message":"Задач нету"}
+
 
 if __name__ == '__main__':
+    Model.metadata.create_all(engine)
     print('Starting server')
     uvicorn.run('main:app', port=8000, reload=True)
     print('Server stopped')

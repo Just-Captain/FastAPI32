@@ -115,3 +115,5 @@ frac_one = Fraction(1, 2)
 frac_two = Fraction(3, 4)
 result = frac_one.multiply(frac_two)
 print(result.output_fraction())
+
+print(Fraction.get_numerator(), 'class')

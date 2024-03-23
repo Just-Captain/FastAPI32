@@ -8,8 +8,9 @@
 <body>
     <h1>Список задач</h1>
         {% for task in tasks %}
-            {{ task.title }}
-            {{ task.description }}
+            <h3>{{ task.title }}</h3>
+            <h4>{{ task.description }}</h4>
+            <hr>
         {% endfor %}
 
     
