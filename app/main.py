@@ -7,7 +7,7 @@ from sqlalchemy import select
 import uvicorn
 from pydantic import BaseModel
 from sqlalchemy.orm import sessionmaker, Session
-from database import Model, engine, Task
+from database import Model, engine, TaskModel
 
 app = FastAPI() # <- создаем экземпляр класса
 app.mount('/static', StaticFiles(directory="static"), name="static")
@@ -36,7 +36,7 @@ class DatabaseJson:
 database = DatabaseJson('database.json')
 
 
-class Task(BaseModel):
+class TaskSchema(BaseModel):
     """
     Схема обьекта, которую мы ожидаем получить от клиента
     """
@@ -44,7 +44,7 @@ class Task(BaseModel):
     description:str
 
 @app.post('/tasks/')
-def create_task(request:Request, task:Task):
+def create_task(request:Request, task:TaskSchema):
     task = {"title": task.title,"description": task.description}
     tasks = database.read()
     tasks['tasks'].append(task)
@@ -64,10 +64,22 @@ def get_tasks(request:Request):
 def api_get_tasks(request:Request):
     session = Session(engine)
     print(session)
-    stmt = select(Task)
+    stmt = select(TaskModel)
     print(stmt)
     #print(stmt)
     return {"Message":"Задач нету"}
+
+@app.post('/api/tasks/')
+def api_post_tasks(task:TaskSchema):
+    new_task = TaskModel()
+    new_task.title = task.title
+    new_task.description = task.description
+    session = Session(engine)
+    session.add(new_task)
+    session.commit()
+    return {'message': 'Задача добавлена'}
+
+
 
 
 if __name__ == '__main__':
