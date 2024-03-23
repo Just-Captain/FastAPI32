@@ -50,6 +50,9 @@ def create_task(request:Request, task:Task):
     tasks['tasks'].append(task)
     database.write(tasks)
 
+@app.get('/tasks/create/')
+def form_create_task(request:Request):
+    return templates.TemplateResponse(request=request, name='create_task.html')
 
 @app.get('/tasks/')
 def get_tasks(request:Request):

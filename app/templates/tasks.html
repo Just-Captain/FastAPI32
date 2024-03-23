@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block body %}
     <h1>Список задач</h1>
         {% for task in tasks %}
             <h3>{{ task.title }}</h3>
@@ -13,32 +8,5 @@
             <hr>
         {% endfor %}
 
+{% endblock %}
     
-    <form id="taskForm">
-        <label for="title">Название задачи</label>
-        <input type="text" id="task-title" name="task-title">
-        <label for="description">Описание задачи</label>
-        <input type="text" id="task-description" name="task-description">
-        <button id="btnTaskForm">Добавить задачу</button>
-    </form>
-    <script>
-        let taskForm = document.getElementById('taskForm');
-        let post_url_tasks = "{{url}}"
-        taskForm.addEventListener('submit', function(event){
-            let title = document.getElementById('task-title').value;
-            let description = document.getElementById('task-description').value;
-            const data = {
-                "title": title,
-                "description": description
-            }
-            fetch(post_url_tasks, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data) // <-- Преобразует JS обьект в JSON обьет
-            })
-        })
-    </script>
-</body>
-</html>
