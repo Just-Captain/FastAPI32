@@ -11,7 +11,7 @@
 </form>
 <script>
     let taskForm = document.getElementById('taskForm');
-    let post_url_tasks = "{{url}}"
+    let post_url_tasks = "http://127.0.0.1:8000/tasks"
     taskForm.addEventListener('submit', function(event){
         let title = document.getElementById('task-title').value;
         let description = document.getElementById('task-description').value;
