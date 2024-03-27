@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Request
 from sqlalchemy.orm import Session
 from database import engine
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from models import TaskModel
-
+from schemas import TaskCreateSchemas
 
 tasks_router = APIRouter(prefix="/api/v1/tasks")
 
@@ -28,4 +28,13 @@ def list_task_point(request: Request): # <- Функция которая при
     else:
         return {"message": tasks} # <- возвращает словарь, который преобразуется в JSON, который будет возвращен клиенту в ответ на запрос.
 
-    
+
+@tasks_router.post(path='/create/')
+def create_task_point(request: Request, task: TaskCreateSchemas):
+    session = Session(engine)
+    stmt = insert(TaskModel).values(title=task.title,
+                                    description=task.description)
+    session.execute(stmt)
+    session.commit()
+    session.close()
+    return task
