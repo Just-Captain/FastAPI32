@@ -23,11 +23,7 @@ def list_task_point(request: Request): # <- Функция которая при
     requst_db = session.execute(stmt) # <- Запрос выполняется с помощью созданной сессии, в результате мы получаем обьект, который соджерит результат запроса
     tasks:list = requst_db.scalars().all() #<- Полученный обьект с результатом преобразуем в список значений при помощи метода scalars() и из него извелаються все значения с помощью метода all()
     session.close() # <- Сеесия закрывается для осовобождения ресурсов связанных с БД.
-    if len(tasks) == 0:
-        return {"message": "У вас нет задач"}
-    else:
-        return {"message": tasks} # <- возвращает словарь, который преобразуется в JSON, который будет возвращен клиенту в ответ на запрос.
-
+    return tasks
 
 @tasks_router.post(path='/create/')
 def create_task_point(request: Request, task: TaskCreateSchema):

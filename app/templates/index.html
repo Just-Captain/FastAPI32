@@ -1,0 +1,46 @@
+{% extends 'base.html'%}
+
+<!-- Начала блока --> 
+{% block body %}
+<h1>Index</h1>
+
+
+
+
+
+<button id="buttonPost">Отправить POST</button>
+
+
+<script>
+
+    const get_api_url_list_task =  'http://127.0.0.1:8000/api/v1/tasks/list/'
+    const post_api_create = 'http://127.0.0.1:8000/api/v1/tasks/create/'
+    const tasksObject = {
+        massiv: [],
+    }
+
+    fetch(new Request(get_api_url_list_task))
+        .then(response => response.json())
+        .then(data => tasksObject.massiv.push(data))
+
+    console.log(tasksObject.massiv)
+
+
+    const buttonPost = document.getElementById('buttonPost');
+    buttonPost.addEventListener('click', function(event){
+        event.preventDefault()
+        fetch(post_api_create, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({'title': 'Пост от клиента',
+         'description': 'Описание от клиена'})
+    });
+    })
+  
+
+</script>
+
+
+
+
+{% endblock %}
