@@ -1,42 +1,111 @@
 {% extends 'base.html'%}
 
-<!-- Начала блока --> 
+
 {% block body %}
-<h1>Index</h1>
 
+<button id="getTaskBtn">Получить задачи</button>
+<ol id="listOl">
 
+</ol>
 
+<form>
+    <label>Название:</label>
+    <input type="text" id="formTitle">
+    <label>Описание:</label>
+    <input type="text" id="formDescription">
+    <button id="formBtn">Отправить запрос</button>
+</form>
 
-
-<button id="buttonPost">Отправить POST</button>
+<form id="formUpdate" style="display: none;">
+    <label>Название:</label>
+    <input type="text" id="formTitle">
+    <label>Описание:</label>
+    <input type="text" id="formDescription">
+    <button id="formBtn">Отправить запрос</button>
+</form>
 
 
 <script>
-
-    const get_api_url_list_task =  'http://127.0.0.1:8000/api/v1/tasks/list/'
-    const post_api_create = 'http://127.0.0.1:8000/api/v1/tasks/create/'
-    const tasksObject = {
-        massiv: [],
-    }
-
-    fetch(new Request(get_api_url_list_task))
-        .then(response => response.json())
-        .then(data => tasksObject.massiv.push(data))
-
-    console.log(tasksObject.massiv)
+const listTaskGet = 'http://127.0.0.1:8000/api/v1/tasks/list/';
 
 
-    const buttonPost = document.getElementById('buttonPost');
-    buttonPost.addEventListener('click', function(event){
-        event.preventDefault()
-        fetch(post_api_create, {
+function hideFormUpdate(){
+    const formUpdate = document.getElementById('formUpdate');
+                formUpdate.addEventListener('click', function(event){
+                    formUpdate.style.display = 'grid'
+                    console.log('formUpdate')
+                })
+}
+
+function getTask(){
+    fetch(listTaskGet)
+      .then(response => response.json())
+      .then(tasks => {
+        let listOl = document.getElementById('listOl');
+        listOl.innerHTML = ''
+        for (let i = 0; i < tasks.length; i++){
+            element_li = document.createElement('li');
+            element_title = document.createElement('h2');
+            element_description = document.createElement('p');
+            element_status = document.createElement('p')
+            element_button_delete = document.createElement('button');
+            element_button_update = document.createElement('button');
+            element_button_update.textContent = 'Изменить';
+            element_button_delete.textContent = 'Удалить'
+            element_button_update.style.background = 'yellow'
+            element_button_delete.style.background = 'red'
+            element_button_delete.id = `d_task_id=${tasks[i].id}`
+            element_button_update.id = `u_task_id=${tasks[i].id}`
+            element_button_delete.addEventListener('click',function(event){
+                event.preventDefault();
+                url = 'http://127.0.0.1:8000/api/v1/tasks/delete/' + '?'+ this.id.slice(2, this.id.length)
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {'Content-Type': 'application/json'},
+    })
+            })
+            element_button_update.addEventListener('click', function(event){
+                event.preventDefault();
+                url = 'http://127.0.0.1:8000/api/v1/tasks/update/' + '?' + this.id.slice(2, this.id.length);
+
+
+            })
+
+            
+            element_title.textContent = tasks[i].title;
+            element_description.textContent = tasks[i].description;
+            element_status.textContent = tasks[i].status;
+            element_div = document.createElement('div');
+            element_div.append(element_title,element_description,element_status,element_button_delete, element_button_update)
+            element_li.append(element_div);
+            listOl.append(element_li);
+        } 
+      })
+
+}
+
+// Что бы получить задачи
+let getTaskBtn = document.getElementById('getTaskBtn');
+getTaskBtn.addEventListener('click', function(event){
+    getTask()
+})
+
+//Что бы отправить POST запрос, что бы создать новую задачу
+let formBtn = document.getElementById('formBtn');
+formBtn.addEventListener('click', function(event){
+    event.preventDefault()
+    let formTitle = document.getElementById('formTitle');
+    let formDescription = document.getElementById('formDescription');
+    task = {'title': formTitle.value, 'description': formDescription.value};
+    fetch('http://127.0.0.1:8000/api/v1/tasks/create', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'title': 'Пост от клиента',
-         'description': 'Описание от клиена'})
-    });
+        body: JSON.stringify(task)
     })
-  
+    formTitle.value = '';
+    formDescription.value = '';
+    getTask()
+})
 
 </script>
 

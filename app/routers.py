@@ -14,7 +14,7 @@ tasks_router = APIRouter(prefix="/api/v1/tasks")
 
 @tasks_router.get(path='/list/') # <- декоратор который указывает что функция определенная ниже будет обрабатывать запросы по такому пути как /list/, полный путь такой /api/v1/tasks/list/
 def list_task_point(request: Request): # <- Функция которая принимает параметр request типа Request, который содержит в себе информацию о запросе клиента.
-    session = Session(engine) # <- создаёт экземпляр класса сесси для работы с базой данных. Используетяс для подключение к БД
+    session:Session = Session(engine) # <- создаёт экземпляр класса сесси для работы с базой данных. Используетяс для подключение к БД
     stmt = select(TaskModel) # <- формирует SQL запрос для выборки всех записей из таблицы сопоставленной с моделью TaskModel
     """
     SELECT task.id, task.title, task.description, task.done 
