@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import engine
 from sqlalchemy import select, insert, update, delete
@@ -47,6 +48,16 @@ def update_task_point(request: Request, task_id:int ,new_task: TaskUpdateSchema)
     session.commit()
     session.close()
     return new_task
+class ProfileSchema(BaseModel):
+    id: int
+    first_name: str
+    last_name:str
+    status: bool
+
+@tasks_router.post('/test/')
+def test_task_point(request: Request, name:str, profile:ProfileSchema):
+    return {"name": name,
+            "profile": profile}
 
 # URL Ваш вариант - 'http://127.0.0.1:8000/api/v1/tasks/delete/5/' @tasks_router.delete(path='/delete/{task_id}/')
 # URL  мой вариант - 'http://127.0.0.1:8000/api/v1/tasks/delete/?task_id=5'
