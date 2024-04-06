@@ -18,10 +18,11 @@
 
 <form id="formUpdate" style="display: none;">
     <label>Название:</label>
-    <input type="text" id="formTitle">
+    <input type="text" id="formUpdateTitle">
     <label>Описание:</label>
-    <input type="text" id="formDescription">
-    <button id="formBtn">Отправить запрос</button>
+    <input type="text" id="formUpdateDescription">
+    <input type="checkbox" id="formUpdateStatus" name="status" checked/>
+    <button id="formUpdateBtn">Отправить изменение</button>
 </form>
 
 
@@ -65,8 +66,31 @@ function getTask(){
     })
             })
             element_button_update.addEventListener('click', function(event){
-                event.preventDefault();
-                url = 'http://127.0.0.1:8000/api/v1/tasks/update/' + '?' + this.id.slice(2, this.id.length);
+                
+                const formUpdate = document.getElementById('formUpdate');
+                formUpdate.style.display = 'block'
+                const formUpdateBtn = document.getElementById('formUpdateBtn');
+                formUpdateBtn.id = 'formUpdateBtn' + this.id.slice(2, this.id.length);
+                formUpdateBtn.addEventListener('click', function(event){
+                    event.preventDefault();
+                    let url = 'http://127.0.0.1:8000/api/v1/tasks/update/' + '?' + this.id.slice(13, this.id.length);
+                    let formUpdateTitle = document.getElementById('formUpdateTitle');
+                    let formUpdateDescription = document.getElementById('formUpdateDescription');
+                    let formUpdateStatus = document.getElementById('formUpdateStatus')
+                    const taskUpdate = {
+                        "title": formUpdateTitle.value,
+                        "description": formUpdateDescription.value,
+                        "status": formUpdateStatus.checked,
+                    }
+                    fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(taskUpdate)
+                    })
+                })
+
 
 
             })
